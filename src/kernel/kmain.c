@@ -14,6 +14,8 @@
 #include "../modules/window.h"
 #include "../modules/welcome_app.h"
 #include "../modules/patches_app.h"
+#include "../modules/showcase_app.h"
+#include "../modules/settings_app.h"
 
 #include "../icons/generic_app.h"
 
@@ -71,8 +73,22 @@ int point_in_rect(int px, int py, int x, int y, int w, int h)
 
 static void draw_background(void)
 {
-
-    fb_draw_gradient_vertical(FB_RGB(140, 185, 235), FB_RGB(215, 232, 250));
+    if (g_wallpaper.type == WALLPAPER_DEFAULT)
+    {
+        fb_draw_gradient_vertical(
+            FB_RGB(140, 185, 235),
+            FB_RGB(215, 232, 250));
+    }
+    else if (g_wallpaper.type == WALLPAPER_DARK)
+    {
+        fb_draw_gradient_vertical(
+            FB_RGB(30, 30, 40),
+            FB_RGB(70, 70, 85));
+    }
+    else if (g_wallpaper.type == WALLPAPER_FLAT)
+    {
+        fb_clear(FB_RGB(160, 160, 160));
+    }
 }
 
 static void draw_bar(int y, int height)
@@ -198,8 +214,12 @@ static void ui_redraw(void)
 
     welcome_app_draw_desktop();
     patches_app_draw_desktop();
+    showcase_app_draw_desktop();
+    settings_app_draw_desktop();
     welcome_app_draw_windows();
     patches_app_draw_windows();
+    showcase_app_draw_windows();
+    settings_app_draw_windows();
 
     draw_cursor(mouse_x, mouse_y);
     fb_swap_buffers();
@@ -271,6 +291,8 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
     __asm__ volatile("sti");
     welcome_app_init();
     patches_app_init();
+    showcase_app_init();
+    settings_app_init();
 
     ui_redraw();
     mouse_dirty = 0;
@@ -292,9 +314,14 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
         if (mouse_dirty || need_redraw)
         {
             ui_input_update();
-            ui_redraw();
+
             welcome_app_tick();
             patches_app_tick();
+            showcase_app_tick();
+            settings_app_tick();
+
+            ui_redraw();
+
             mouse_dirty = 0;
         }
 

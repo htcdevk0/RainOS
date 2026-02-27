@@ -70,14 +70,6 @@ void fb_swap_buffers(void)
     }
 }
 
-static int fb_strlen(const char *s)
-{
-    int n = 0;
-    while (s && s[n])
-        n++;
-    return n;
-}
-
 void fb_draw_icon(int x, int y, const FB_Icon *icon)
 {
     if (!icon)
@@ -122,7 +114,10 @@ void fb_draw_icon_scaled(int x, int y, const FB_Icon *icon, int scale)
 
 void fb_draw_button(FB_Button *btn)
 {
-    static int prev_left_down = 0;
+    if (!btn)
+        return;
+
+    extern int mouse_left_pressed_once;
 
     int hover =
         mouse_x >= btn->x &&
@@ -130,13 +125,11 @@ void fb_draw_button(FB_Button *btn)
         mouse_y >= btn->y &&
         mouse_y < btn->y + btn->h;
 
-    int mouse_left_pressed_once = (mouse_left_down && !prev_left_down);
-    prev_left_down = mouse_left_down;
-
     uint32_t base = btn->color;
 
     if (hover)
         base = FB_RGB(210, 210, 210);
+
     if (hover && mouse_left_down)
         base = FB_RGB(175, 175, 175);
 
@@ -152,10 +145,10 @@ void fb_draw_button(FB_Button *btn)
 
         if (btn->text)
         {
-            int len = fb_strlen(btn->text);
-            int text_w = len * (FONT_WIDTH + 1) - 1;
-            if (len <= 0)
-                text_w = 0;
+            int len = 0;
+            while (btn->text[len]) len++;
+
+            int text_w = len > 0 ? len * (FONT_WIDTH + 1) - 1 : 0;
 
             int text_x = btn->x + (btn->w - text_w) / 2;
             int text_y = icon_y + btn->icon->h + 6;
@@ -165,13 +158,12 @@ void fb_draw_button(FB_Button *btn)
     }
     else
     {
-
         if (btn->text)
         {
-            int len = fb_strlen(btn->text);
-            int text_w = len * (FONT_WIDTH + 1) - 1;
-            if (len <= 0)
-                text_w = 0;
+            int len = 0;
+            while (btn->text[len]) len++;
+
+            int text_w = len > 0 ? len * (FONT_WIDTH + 1) - 1 : 0;
 
             int text_x = btn->x + (btn->w - text_w) / 2;
             int text_y = btn->y + (btn->h - FONT_HEIGHT) / 2;

@@ -61,7 +61,9 @@ C_SOURCES := \
     src/icons/generic_app.c \
     src/icons/desktop.c \
     src/desktop/home.c \
-	src/modules/patches_app.c
+	src/modules/patches_app.c \
+	src/modules/showcase_app.c \
+	src/modules/settings_app.c
 
 ASM_SOURCES := \
     src/boot/boot64.asm \
