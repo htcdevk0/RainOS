@@ -1,0 +1,25 @@
+desktop-image: "background.png"
+
+# Nome do sistema abaixo
++ label {
+    left = 0
+    top = 14%
+    width = 100%
+    align = "center"
+
+    text = "RainOS"
+    font = "font"
+    color = "#0A2A4F"
+}
+
+# Mensagem central
++ label {
+    left = 0
+    top = 50%-20
+    width = 100%
+    align = "center"
+
+    text = "Press Enter to continue . . ."
+    font = "font"
+    color = "#000000"
+}
