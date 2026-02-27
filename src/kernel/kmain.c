@@ -13,6 +13,7 @@
 
 #include "../modules/window.h"
 #include "../modules/welcome_app.h"
+#include "../modules/patches_app.h"
 
 #include "../icons/generic_app.h"
 
@@ -196,7 +197,9 @@ static void ui_redraw(void)
     home_draw();
 
     welcome_app_draw_desktop();
+    patches_app_draw_desktop();
     welcome_app_draw_windows();
+    patches_app_draw_windows();
 
     draw_cursor(mouse_x, mouse_y);
     fb_swap_buffers();
@@ -267,6 +270,7 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
     mouse_init();
     __asm__ volatile("sti");
     welcome_app_init();
+    patches_app_init();
 
     ui_redraw();
     mouse_dirty = 0;
@@ -290,6 +294,7 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
             ui_input_update();
             ui_redraw();
             welcome_app_tick();
+            patches_app_tick();
             mouse_dirty = 0;
         }
 

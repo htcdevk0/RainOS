@@ -60,7 +60,8 @@ C_SOURCES := \
     src/modules/welcome_app.c \
     src/icons/generic_app.c \
     src/icons/desktop.c \
-    src/desktop/home.c
+    src/desktop/home.c \
+	src/modules/patches_app.c
 
 ASM_SOURCES := \
     src/boot/boot64.asm \
@@ -140,7 +141,6 @@ run-cpu: iso
 		-machine q35 \
 		-cpu host \
 		-drive if=pflash,format=raw,readonly=on,file=$(EFI_CODE) \
-		-drive if=pflash,format=raw,file=$(EFI_VARS) \
 		-cdrom $(ISO_FILE) \
 		-m 12G \
 		-display sdl,gl=on \
