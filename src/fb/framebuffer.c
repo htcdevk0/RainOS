@@ -1,5 +1,6 @@
 #include "framebuffer.h"
 #include "font.h"
+#include "../drivers/keyboard.h"
 #include <stdint-gcc.h>
 
 Framebuffer g_framebuffer = {0};
@@ -8,6 +9,9 @@ uint32_t *fb_backbuffer = 0;
 
 extern int mouse_y, mouse_x;
 extern volatile int mouse_left_down;
+
+extern volatile char keyboard_last_char;
+extern int mouse_left_pressed_once;
 
 static inline int fb_in_bounds(int x, int y)
 {
@@ -146,7 +150,8 @@ void fb_draw_button(FB_Button *btn)
         if (btn->text)
         {
             int len = 0;
-            while (btn->text[len]) len++;
+            while (btn->text[len])
+                len++;
 
             int text_w = len > 0 ? len * (FONT_WIDTH + 1) - 1 : 0;
 
@@ -161,7 +166,8 @@ void fb_draw_button(FB_Button *btn)
         if (btn->text)
         {
             int len = 0;
-            while (btn->text[len]) len++;
+            while (btn->text[len])
+                len++;
 
             int text_w = len > 0 ? len * (FONT_WIDTH + 1) - 1 : 0;
 
@@ -438,5 +444,85 @@ void fb_draw_gradient_horizontal(uint32_t left_color, uint32_t right_color)
 
         uint32_t color = FB_RGB(r, g, b);
         fb_draw_vline((int)x, 0, (int)g_framebuffer.height, color);
+    }
+}
+
+void fb_textarea_handle_input(FB_TextArea *ta)
+{
+    if (!ta || !ta->buffer || ta->buffer_size <= 1)
+        return;
+
+    if (!ta->focused)
+        return;
+
+    char c;
+
+    while ((c = keyboard_get_char()) != 0)
+    {
+        if (c == '\b')
+        {
+            if (ta->length > 0)
+            {
+                ta->length--;
+                ta->buffer[ta->length] = 0;
+            }
+            continue;
+        }
+
+        if (c == '\n')
+        {
+            if (ta->on_enter)
+                ta->on_enter(ta->buffer);
+            continue;
+        }
+
+        if (c >= 32 && c <= 126)
+        {
+            if (ta->length < ta->buffer_size - 1)
+            {
+                ta->buffer[ta->length++] = c;
+                ta->buffer[ta->length] = 0;
+            }
+        }
+    }
+}
+
+void fb_draw_textarea(FB_TextArea *ta)
+{
+    if (!ta || !ta->buffer)
+        return;
+
+    if (mouse_left_pressed_once)
+    {
+        int hover =
+            mouse_x >= ta->x &&
+            mouse_x < ta->x + ta->w &&
+            mouse_y >= ta->y &&
+            mouse_y < ta->y + ta->h;
+
+        ta->focused = hover ? 1 : 0;
+    }
+
+    fb_fill_rect(ta->x, ta->y, ta->w, ta->h, ta->bg_color);
+
+    uint32_t border = ta->border_color;
+    if (ta->focused)
+        border = FB_RGB(70, 120, 255);
+
+    fb_draw_rect(ta->x, ta->y, ta->w, ta->h, border);
+
+    int text_x = ta->x + 6;
+    int text_y = ta->y + (ta->h - FONT_HEIGHT) / 2;
+
+    fb_draw_text(text_x, text_y, ta->buffer, ta->text_color);
+
+    if (ta->focused)
+    {
+        int cursor_x = text_x + ta->length * (FONT_WIDTH + 1);
+        int cursor_y = ta->y + 4;
+        int cursor_h = ta->h - 8;
+
+        if (cursor_x < ta->x + ta->w - 2)
+            fb_draw_vline(cursor_x, cursor_y, cursor_h, FB_RGB(20, 20, 20));
     }
 }

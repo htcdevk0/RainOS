@@ -63,7 +63,8 @@ C_SOURCES := \
     src/desktop/home.c \
 	src/modules/patches_app.c \
 	src/modules/showcase_app.c \
-	src/modules/settings_app.c
+	src/modules/settings_app.c \
+	src/modules/debug_app.c
 
 ASM_SOURCES := \
     src/boot/boot64.asm \

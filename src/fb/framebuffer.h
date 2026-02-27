@@ -32,6 +32,26 @@ typedef struct
     const FB_Icon *icon;
 } FB_Button;
 
+typedef void (*textarea_enter_callback_t)(char *text);
+
+typedef struct
+{
+    int x, y;
+    int w, h;
+
+    char *buffer;
+    int buffer_size;
+    int length;
+
+    int focused;
+
+    uint32_t bg_color;
+    uint32_t border_color;
+    uint32_t text_color;
+
+    textarea_enter_callback_t on_enter;
+} FB_TextArea;
+
 extern Framebuffer g_framebuffer;
 
 extern uint32_t *fb_backbuffer;
@@ -68,5 +88,8 @@ void fb_draw_button(FB_Button *btn);
 void fb_draw_icon(int x, int y, const FB_Icon *icon);
 
 void fb_draw_icon_scaled(int x, int y, const FB_Icon *icon, int scale);
+
+void fb_draw_textarea(FB_TextArea *ta);
+void fb_textarea_handle_input(FB_TextArea *ta);
 
 #endif

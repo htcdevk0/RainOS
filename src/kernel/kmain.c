@@ -17,6 +17,11 @@
 #include "../modules/showcase_app.h"
 #include "../modules/settings_app.h"
 
+#define KMAIN_DEBUG
+#ifdef KMAIN_DEBUG
+#include "../modules/debug_app.h"
+#endif
+
 #include "../icons/generic_app.h"
 
 static int last_second = -1;
@@ -216,6 +221,8 @@ static void ui_redraw(void)
     patches_app_draw_desktop();
     showcase_app_draw_desktop();
     settings_app_draw_desktop();
+    debug_app_draw_desktop();
+    debug_app_draw_windows();
     welcome_app_draw_windows();
     patches_app_draw_windows();
     showcase_app_draw_windows();
@@ -293,13 +300,13 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
     patches_app_init();
     showcase_app_init();
     settings_app_init();
+    debug_app_init();
 
     ui_redraw();
     mouse_dirty = 0;
 
     for (;;)
     {
-
         RTC_Time now;
         rtc_read(&now);
 
@@ -319,6 +326,7 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
             patches_app_tick();
             showcase_app_tick();
             settings_app_tick();
+            debug_app_tick();
 
             ui_redraw();
 

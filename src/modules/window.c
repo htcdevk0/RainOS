@@ -355,3 +355,27 @@ int fb_window_mouse_in_content(FB_Window *win)
         return 0;
     return point_in_rect(mouse_x, mouse_y, win->content_x, win->content_y, win->content_w, win->content_h);
 }
+
+void fb_window_draw_textarea(FB_Window *win, FB_TextArea *ta)
+{
+    if (!win || !win->open || !ta)
+        return;
+
+    FB_TextArea tmp = *ta;
+    tmp.x = win->content_x + ta->x;
+    tmp.y = win->content_y + ta->y;
+
+    fb_draw_textarea(&tmp);
+
+    ta->focused = tmp.focused;
+}
+
+void fb_window_textarea_handle_input(FB_Window *win, FB_TextArea *ta)
+{
+    (void)win;
+
+    if (!ta)
+        return;
+
+    fb_textarea_handle_input(ta);
+}
