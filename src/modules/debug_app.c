@@ -10,10 +10,6 @@ extern int mouse_x, mouse_y;
 extern volatile int mouse_left_down;
 extern volatile int mouse_left_pressed_once;
 
-/* =========================================================
-   STATE
-   ========================================================= */
-
 static FB_Window g_win = {
     .title = "Debug App",
     .x = 280,
@@ -21,17 +17,12 @@ static FB_Window g_win = {
     .w = 560,
     .h = 360,
     .created = 0,
-    .open = 0
-};
+    .open = 0};
 
 static char g_input_buffer[128] = {0};
 static char g_display_text[128] = "Type something and press Enter.";
 
 static FB_TextArea g_textarea;
-
-/* =========================================================
-   CALLBACK
-   ========================================================= */
 
 static void debug_on_enter(char *text)
 {
@@ -48,10 +39,6 @@ static void debug_on_enter(char *text)
     g_textarea.length = 0;
     g_input_buffer[0] = 0;
 }
-
-/* =========================================================
-   INIT
-   ========================================================= */
 
 void debug_app_init(void)
 {
@@ -75,10 +62,6 @@ void debug_app_init(void)
     g_textarea.on_enter = debug_on_enter;
 }
 
-/* =========================================================
-   OPEN
-   ========================================================= */
-
 void debug_app_open(void)
 {
     if (!g_win.created)
@@ -87,18 +70,9 @@ void debug_app_open(void)
         fb_openWindow(&g_win);
 }
 
-/* =========================================================
-   TICK
-   ========================================================= */
-
 void debug_app_tick(void)
 {
-    /* nada especial aqui por enquanto */
 }
-
-/* =========================================================
-   DESKTOP (sem ícone ainda)
-   ========================================================= */
 
 void debug_app_draw_desktop(void)
 {
@@ -124,7 +98,6 @@ void debug_app_draw_desktop(void)
                      FB_RGB(120, 130, 145));
     }
 
-    /* Ícone (usa generic por enquanto) */
     int scale = 2;
 
     int scaled_w = icon_generic_app.w * scale;
@@ -135,11 +108,11 @@ void debug_app_draw_desktop(void)
 
     fb_draw_icon_scaled(ix, iy, &icon_generic_app, scale);
 
-    /* Texto */
     const char *label = "Debug";
 
     int len = 0;
-    while (label[len]) len++;
+    while (label[len])
+        len++;
 
     int tw = len * (FONT_WIDTH + 1) - 1;
 
@@ -149,16 +122,11 @@ void debug_app_draw_desktop(void)
     fb_draw_text(tx + 1, ty + 1, label, FB_RGB(0, 0, 0));
     fb_draw_text(tx, ty, label, FB_RGB(245, 245, 245));
 
-    /* Clique */
     if (hover && mouse_left_pressed_once)
     {
         debug_app_open();
     }
 }
-
-/* =========================================================
-   WINDOWS
-   ========================================================= */
 
 void debug_app_draw_windows(void)
 {
@@ -169,22 +137,18 @@ void debug_app_draw_windows(void)
 
     fb_window_content(&g_win);
 
-    /* Título interno */
     fb_window_draw_text(&g_win, 20, 16,
-        "Debug Output:",
-        FB_RGB(35, 38, 44));
+                        "Debug Output:",
+                        FB_RGB(35, 38, 44));
 
-    /* Texto grande exibido */
     fb_window_draw_text(&g_win, 20, 50,
-        g_display_text,
-        FB_RGB(20, 20, 20));
+                        g_display_text,
+                        FB_RGB(20, 20, 20));
 
-    /* instrução */
     fb_window_draw_text(&g_win, 20, 190,
-        "Enter text below:",
-        FB_RGB(60, 65, 70));
+                        "Enter text below:",
+                        FB_RGB(60, 65, 70));
 
-    /* INPUT */
     fb_window_textarea_handle_input(&g_win, &g_textarea);
     fb_window_draw_textarea(&g_win, &g_textarea);
 
