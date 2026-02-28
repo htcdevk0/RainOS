@@ -1,4 +1,5 @@
 # RainOS
+<a href="https://ibb.co/x8YWSJ3Z"><img src="https://i.ibb.co/PzMKZwtk/Rain-OS.png" alt="Rain-OS" border="0" width=80>RainOS</a>
 
 Version: 1.1.0
 Last patch (Not listed): Added 64-bits and Uefi Support.
