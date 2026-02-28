@@ -175,4 +175,18 @@ APIs and internal structures may change.
 It is a learning system first.
 A product never.
 
+## Patches
+
+- Patches App
+
+- Settings App
+
+- Showcase App
+
+- Debug App
+
+- Improved Cursor
+
+- Improved Icons
+
 Made by: htcdevk0.

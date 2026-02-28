@@ -60,4 +60,6 @@ void fb_window_focus(FB_Window *win);
 void fb_window_draw_textarea(FB_Window *win, FB_TextArea *ta);
 void fb_window_textarea_handle_input(FB_Window *win, FB_TextArea *ta);
 
+int fb_ui_mouse_captured(void);
+
 #endif

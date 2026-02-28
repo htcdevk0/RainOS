@@ -10,6 +10,7 @@
 #include <stdint-gcc.h>
 
 #include "../desktop/home.h"
+#include "../desktop/cursor.h"
 
 #include "../modules/window.h"
 #include "../modules/welcome_app.h"
@@ -17,14 +18,21 @@
 #include "../modules/showcase_app.h"
 #include "../modules/settings_app.h"
 
-#define KMAIN_DEBUG
+#include "../userd/shell.h"
+
 #ifdef KMAIN_DEBUG
 #include "../modules/debug_app.h"
 #endif
 
 #include "../icons/generic_app.h"
+#include "../icons/shell_icon.h"
+#include "../icons/settings_icon.h"
+
+#include "../icons/desktop.h"
 
 static int last_second = -1;
+
+extern volatile int g_cursor_pointer;
 
 static void cpu_hang(void)
 {
@@ -109,75 +117,12 @@ static void draw_separator(int y)
     fb_draw_hline(0, y, (int)g_framebuffer.width, line);
 }
 
-static void draw_cursor(int x, int y)
-{
-    uint32_t black = FB_RGB(0, 0, 0);
-    uint32_t white = FB_RGB(255, 255, 255);
-    uint32_t shadow = FB_RGB(0, 0, 0);
-    uint32_t aa_gray = FB_RGB(192, 192, 192);
-
-    const int H = 24;
-    const int OUTER_MAX = 14;
-    const int INNER_MAX = 12;
-
-    for (int i = 0; i < H; i++)
-    {
-        int w = (i * (OUTER_MAX + 3)) / (H - 1);
-        for (int j = 0; j <= w; j++)
-        {
-            fb_put_pixel(x + j + 2, y + i + 2, shadow);
-        }
-    }
-    for (int i = 0; i < H; i++)
-    {
-        int w = (i * (OUTER_MAX + 2)) / (H - 1) + 1;
-        for (int j = 0; j <= w; j++)
-        {
-            fb_put_pixel(x + j + 1, y + i + 1, shadow);
-        }
-    }
-
-    for (int i = 0; i < H; i++)
-    {
-        int w = (i * OUTER_MAX) / (H - 1);
-        for (int j = 0; j <= w; j++)
-        {
-            fb_put_pixel(x + j, y + i, white);
-        }
-    }
-
-    for (int i = 1; i < H - 1; i++)
-    {
-        int w = (i * INNER_MAX) / (H - 1);
-        if (w > 0)
-        {
-            for (int j = 1; j <= w; j++)
-            {
-                fb_put_pixel(x + j, y + i, black);
-            }
-        }
-    }
-
-    for (int i = 0; i < H; i++)
-    {
-        int w = (i * OUTER_MAX) / (H - 1);
-        fb_put_pixel(x + w + 1, y + i, aa_gray);
-    }
-
-    fb_put_pixel(x, y, white);
-    fb_put_pixel(x + 1, y + 1, black);
-    fb_put_pixel(x + 1, y + 2, black);
-
-    int base_w = OUTER_MAX;
-    for (int j = 0; j <= base_w; j++)
-    {
-        fb_put_pixel(x + j, y + H - 1, white);
-    }
-}
-
 static void ui_redraw(void)
 {
+    g_cursor_pointer = 0;
+    fb_desktop_input_begin_frame();
     fb_window_input_begin_frame();
+
     draw_background();
 
     int infobar_h = 40;
@@ -220,9 +165,14 @@ static void ui_redraw(void)
     welcome_app_draw_desktop();
     patches_app_draw_desktop();
     showcase_app_draw_desktop();
-    settings_app_draw_desktop();
+#ifdef KMAIN_DEBUG
     debug_app_draw_desktop();
+#endif
+    fb_desktop_draw();
+    shell_app_draw_windows();
+#ifdef KMAIN_DEBUG
     debug_app_draw_windows();
+#endif
     welcome_app_draw_windows();
     patches_app_draw_windows();
     showcase_app_draw_windows();
@@ -281,6 +231,8 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
             fbtag->framebuffer_bpp);
 
     generic_app_icon_init();
+    shell_icon_init();
+    settings_icon_init();
 
     idt_init();
     pic_remap(0x20, 0x28);
@@ -300,7 +252,10 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
     patches_app_init();
     showcase_app_init();
     settings_app_init();
+#ifdef KMAIN_DEBUG
     debug_app_init();
+#endif
+    shell_app_init();
 
     ui_redraw();
     mouse_dirty = 0;
@@ -322,11 +277,18 @@ void kmain(uint32_t multiboot_magic, uint32_t multiboot_addr)
         {
             ui_input_update();
 
+            fb_desktop_input_begin_frame();
+
+            fb_desktop_tick();
+
             welcome_app_tick();
             patches_app_tick();
             showcase_app_tick();
             settings_app_tick();
+#ifdef KMAIN_DEBUG
             debug_app_tick();
+#endif
+            shell_app_tick();
 
             ui_redraw();
 

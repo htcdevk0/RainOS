@@ -60,11 +60,16 @@ C_SOURCES := \
     src/modules/welcome_app.c \
     src/icons/generic_app.c \
     src/icons/desktop.c \
+	src/icons/shell_icon.c \
+	src/icons/settings_icon.c \
     src/desktop/home.c \
+	src/desktop/cursor.c \
 	src/modules/patches_app.c \
 	src/modules/showcase_app.c \
 	src/modules/settings_app.c \
-	src/modules/debug_app.c
+	src/modules/debug_app.c \
+	src/userd/shell.c \
+	src/userd/shell_interpreter.c \
 
 ASM_SOURCES := \
     src/boot/boot64.asm \
@@ -93,6 +98,7 @@ dirs:
 	mkdir -p $(BUILD_DIR)/src/modules
 	mkdir -p $(BUILD_DIR)/src/icons
 	mkdir -p $(BUILD_DIR)/src/desktop
+	mkdir -p $(BUILD_DIR)/src/userd
 	mkdir -p $(ISO_DIR)/boot/grub
 
 # ---------------- Compilation ----------------

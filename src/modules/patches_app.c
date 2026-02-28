@@ -25,8 +25,7 @@ static FB_Window g_win = {
     .w = 500,
     .h = 260,
     .created = 0,
-    .open = 0
-};
+    .open = 0};
 
 static int point_in_rect(int px, int py, int x, int y, int w, int h)
 {
@@ -91,7 +90,8 @@ void patches_app_draw_desktop(void)
     const char *label = "Patches";
 
     int len = 0;
-    while (label[len]) len++;
+    while (label[len])
+        len++;
 
     int tw = len * (FONT_WIDTH + 1) - 1;
 
@@ -112,20 +112,32 @@ void patches_app_draw_windows(void)
     fb_window_content(&g_win);
 
     fb_window_draw_text(&g_win, 16, 16,
-        "RainOS Patch Notes",
-        FB_RGB(25, 25, 28));
+                        "RainOS Patch Notes",
+                        FB_RGB(25, 25, 28));
 
     fb_window_draw_text(&g_win, 16, 46,
-        "Patches App Added.",
-        FB_RGB(45, 45, 50));
+                        "Patches App Added.",
+                        FB_RGB(45, 45, 50));
 
     fb_window_draw_text(&g_win, 16, 66,
-        "Github Repository Released.",
-        FB_RGB(45, 45, 50));
+                        "Github Repository Released.",
+                        FB_RGB(45, 45, 50));
 
-    fb_window_draw_text(&g_win, 16, 96,
-        "Version: 1.1.0",
-        FB_RGB(20, 80, 30));
+    fb_window_draw_text(&g_win, 16, 86,
+                        "Added 3 More Apps: Settings, Showcase, Debug",
+                        FB_RGB(45, 45, 50));
+
+    fb_window_draw_text(&g_win, 16, 106,
+                        "Improved Cursor",
+                        FB_RGB(45, 45, 50));
+
+    fb_window_draw_text(&g_win, 16, 126,
+                        "Improved Icons",
+                        FB_RGB(45, 45, 50));
+
+    fb_window_draw_text(&g_win, 16, 156,
+                        "Version: 1.1.0",
+                        FB_RGB(20, 80, 30));
 
     fb_window_end_content(&g_win);
 }

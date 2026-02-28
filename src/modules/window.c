@@ -9,6 +9,7 @@ extern volatile int mouse_dirty;
 static int g_prev_left_down = 0;
 static int g_mouse_left_pressed_once = 0;
 static int g_mouse_left_released_once = 0;
+static int g_ui_mouse_captured = 0;
 
 static FB_Window *g_content_win = 0;
 static int g_content_active = 0;
@@ -51,6 +52,7 @@ static void draw_shadow_rect(int x, int y, int w, int h)
 
 void fb_window_input_begin_frame(void)
 {
+    g_ui_mouse_captured = 0;
     int now = (mouse_left_down != 0);
     g_mouse_left_pressed_once = (now && !g_prev_left_down);
     g_mouse_left_released_once = (!now && g_prev_left_down);
@@ -276,6 +278,9 @@ void fb_drawWindow(FB_Window *win)
     if (!win->open)
         return;
 
+    if (point_in_rect(mouse_x, mouse_y, win->x, win->y, win->w, win->h))
+        g_ui_mouse_captured = 1;
+
     fb_window_update_layout(win);
     fb_window_handle_drag_and_close(win);
 
@@ -378,4 +383,9 @@ void fb_window_textarea_handle_input(FB_Window *win, FB_TextArea *ta)
         return;
 
     fb_textarea_handle_input(ta);
+}
+
+int fb_ui_mouse_captured(void)
+{
+    return g_ui_mouse_captured;
 }

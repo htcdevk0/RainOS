@@ -13,6 +13,8 @@ extern volatile int mouse_left_down;
 extern volatile char keyboard_last_char;
 extern int mouse_left_pressed_once;
 
+extern volatile int g_cursor_pointer;
+
 static inline int fb_in_bounds(int x, int y)
 {
     return (x >= 0 && y >= 0 &&
@@ -131,6 +133,8 @@ void fb_draw_button(FB_Button *btn)
 
     uint32_t base = btn->color;
 
+    if (hover)
+        g_cursor_pointer = 1;
     if (hover)
         base = FB_RGB(210, 210, 210);
 
