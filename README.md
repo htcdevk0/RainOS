@@ -128,6 +128,7 @@ Everything is built with direct hardware awareness in mind.
 Recommended environment:
 
 - Linux (Ubuntu/Debian-based recommended)
+- - Arch Linux having much problems with QEMU and OVMF (v1.2.0)
 - NASM
 - GCC (freestanding mode)
 - GRUB tools
