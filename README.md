@@ -190,4 +190,4 @@ A product never.
 
 - Improved Icons
 
-Made by: htcdevk0.
+Made by: htcdevk0,Maxmoita
